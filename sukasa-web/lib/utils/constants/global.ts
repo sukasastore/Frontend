@@ -8,10 +8,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ISeverityStyles } from "../interfaces/toast.interface";
 
-export const ENV: "DEV" | "STAGE" | "PROD" = "STAGE";
+export const ENV: "DEV" | "PROD" = "PROD";
 
 // Prices
-export const APP_NAME = "Sukasa";
+export const APP_NAME = "Enatega";
 export const LOGO_URL = "/";
 
 export const MIN_PRICE = 0.0;

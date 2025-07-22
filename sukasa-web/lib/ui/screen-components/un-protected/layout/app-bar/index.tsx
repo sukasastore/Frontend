@@ -63,7 +63,7 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
 
   // Hooks
   const router = useRouter();
-  const { GOOGLE_MAPS_KEY, CURRENCY_SYMBOL } = useConfig();
+  const { GOOGLE_MAPS_KEY, CURRENCY_SYMBOL,isMultiVendor } = useConfig();
   const {
     cartCount,
     calculateSubtotal,
@@ -153,9 +153,11 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
 
     // Logo click handler
    const logoClickHandler = () => {
-    if (isLogin){
+    if (isLogin && isMultiVendor ){
       router.push("/discovery");
-    }else {
+    }else if(!isMultiVendor){
+      router.push(`/`);
+    }else{
       router.push("/");
     }
    };
@@ -213,6 +215,8 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
           </div>
         );
       }
+
+  
 
       // Subcase: Display recent history
       return (
@@ -295,7 +299,7 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
                   <div 
                   onClick={logoClickHandler}
                   className="text-xl font-bold text-gray-900">
-                   <Logo className="w-32 h-auto" />
+                   <Logo className="w-32 h-auto" fillColor="#000000" />
                   </div>
                 )}
                 {!isSearchFocused && 
@@ -351,7 +355,7 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
                     value={filter}
                     onChange={handleSearchInputChange}
                     onFocus={() => setIsSearchFocused(true)}
-                    placeholder="Search in Sukasa"
+                    placeholder="Search in enatega"
                     className={`
       w-full px-4 py-2 pr-10 border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-sky-500
       ${!isSearchFocused ? "hidden" : "block"} sm:block
@@ -389,10 +393,10 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
                   )}
                 {!authToken && !isSearchFocused ?
                   <button
-                    className="md:w-20 w-16 h-fit py-3 text-gray-900 md:py-3  px-3 bg-[#5AC12F] rounded text-sm lg:text-[16px] md:text-md "
+                    className="md:w-20 w-16 h-fit py-2 text-gray-900 md:py-3  px-2 bg-[#5AC12F] rounded text-sm lg:text-[16px] md:text-md "
                     onClick={handleModalToggle}
                   >
-                    <span className="text-white font-semibold text-[16px]">
+                    <span className="text-white font-semibold text-xs md:text-base">
                       Login
                     </span>
                   </button>
@@ -542,7 +546,7 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
                 <div className="flex gap-4">
                   <LocationSvg width={22} height={22} />
                   <p className="text-[14px] text-[#94e469]">
-                    {userAddress?.deliveryAddress}
+                    {fittedAddress(userAddress?.deliveryAddress)}
                   </p>
                   <div className="sm:flex items-center">
                     <FontAwesomeIcon

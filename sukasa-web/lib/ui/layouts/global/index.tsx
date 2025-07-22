@@ -12,6 +12,7 @@ import { IProvider } from "@/lib/utils/interfaces";
 import { useConfig } from "@/lib/context/configuration/configuration.context";
 import { GoogleMapsProvider } from "@/lib/context/global/google-maps.context";
 import AuthModal from "@/lib/ui/screen-components/un-protected/authentication";
+import { usePathname } from "next/navigation";
 import AppFooter from "../../screen-components/un-protected/layout/app-footer";
 
 // Search Context 
@@ -19,17 +20,16 @@ import { useSearchUI } from "@/lib/context/search/search.context";
 
 // Hooks
 import { useAuth } from "@/lib/context/auth/auth.context";
-import { usePathname } from "next/navigation";
 
 const AppLayout = ({ children }: IProvider) => {
   const pathname = usePathname();
-  const [isScrolled , setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
   // Hooks
   const { isAuthModalVisible, setIsAuthModalVisible, setActivePanel } = useAuth();
   const { isSearchFocused } = useSearchUI();
-  
-  // Hook
   const { GOOGLE_MAPS_KEY, LIBRARIES } = useConfig();
+  
 
   const handleModalToggle = () => {
     setIsAuthModalVisible((prev) => {
@@ -77,8 +77,6 @@ const AppLayout = ({ children }: IProvider) => {
       />
     </div>
   );
-
-  useEffect(() => {}, [GOOGLE_MAPS_KEY]);
 
   return GOOGLE_MAPS_KEY ?
       <GoogleMapsProvider apiKey={GOOGLE_MAPS_KEY} libraries={LIBRARIES}>

@@ -6,8 +6,7 @@ import DisplayError from "./components/DisplayError";
 import { useConfig } from "@/lib/context/configuration/configuration.context";
 import Map from "./components/Map";
 import SideList from "./components/SideList";
-import dynamic from "next/dynamic";
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+import Lottie from "lottie-react";
 
 interface MapViewPageProps {
     params: {
@@ -43,7 +42,7 @@ const MapView: FC<MapViewPageProps> = ({ params }) => {
                 <DisplayError />
             ) : data?.length > 0 ? (
                 <div className="flex mt-1 relative min-h-screen max-h-screen md:flex-row flex-col-reverse">
-                    <div className="md:relative absolute bottom-0 z-[99] md:flex-[0.35] xl:flex-[0.25] overflow-y-auto md:w-auto w-full">
+                    <div className="md:relative absolute bottom-0 z-[99] md:flex-[0.35] xl:flex-[0.25] overflow-y-auto md:w-auto w-full mb-4">
                         <SideList
                             data={data}
                             slug={slug}

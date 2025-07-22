@@ -19,7 +19,7 @@ const Couriers:React.FC = () => {
           Banner2
         }
         heading={"For Riders"}
-        subText={"EARN WHEN AND WHERE YOU WANT"}
+        subText={"Earn when and where you want"}
         button={EarnWhereButton}
         middle={true}
       />
@@ -46,7 +46,7 @@ const Couriers:React.FC = () => {
         image={
           "https://images.ctfassets.net/23u853certza/QScF4OasY8MBTmzrKJfv1/9afd4f8a826825cc097fb36606a81963/3DCourier.webp?w=200&q=90&fm=webp"
         }
-        heading={"Become a Sukasa rider"}
+        heading={"Become a Enatega rider"}
         buttonText={"For riders"}
         backColor={"#eaf7fc"}
         link={"/rider"}

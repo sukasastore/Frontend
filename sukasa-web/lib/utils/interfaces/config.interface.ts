@@ -14,17 +14,9 @@ export interface IConfigProps {
   CURRENCY: string;
   CURRENCY_SYMBOL: string;
   DELIVERY_RATE: number;
+  IS_MULTIVENDOR: boolean;
   COST_TYPE: string;
   TEST_OTP: string;
   SERVER_URL: string;
-  FIREBASE_AUTH_DOMAIN: string ;
-  FIREBASE_KEY: string ;
-  FIREBASE_PROJECT_ID: string ;
-  FIREBASE_STORAGE_BUCKET: string ;
-  FIREBASE_MSG_SENDER_ID: string ;
-  FIREBASE_APP_ID: string ;
-  FIREBASE_MEASUREMENT_ID: string ;
-  FIREBASE_VAPID_KEY: string ,
-
-  
+  isMultiVendor: boolean;
 }

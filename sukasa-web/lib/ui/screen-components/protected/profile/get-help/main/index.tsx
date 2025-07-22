@@ -188,7 +188,7 @@ export default function GetHelpMain() {
 
     return (
         <div className="w-full mx-auto">
-            <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+            <div className="bg-white md:p-6 rounded-lg shadow-sm mb-10">
                 <div className="mb-6">
                     <TextComponent
                         text={`Hi ${userName} 👋`}
@@ -252,7 +252,7 @@ export default function GetHelpMain() {
                                 onClick={handleCloseModal}
                                 className="text-white hover:text-gray-300"
                             >
-                                <span className="sr-only">Close</span>✕
+                                {/* <span className="sr-only">Close</span>✕ */}
                             </button>
                         </div>
                     </div>

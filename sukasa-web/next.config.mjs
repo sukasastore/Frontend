@@ -1,55 +1,8 @@
 import createNextIntlPlugin from "next-intl/plugin";
-import PWA from 'next-pwa';
-
-const withPWA = PWA({
-    skipWaiting: false,
-    register:false,
-    dest:'public',
-    // disable: process.env.NODE_ENV === 'development',
-    swSrc: 'public/serviceWorker.js', // Or service-worker.ts if using TS & custom build process
-    buildExcludes: [
-      /app-build-manifest\.json$/,
-      /middleware-manifest\.json$/,     // (often fails too)
-    ],
-    scope: '/',
-  }
-);
-
 
 const withNextIntl = createNextIntlPlugin();
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: 'upgrade-insecure-requests'
-          },
-          // Optional: Add other security headers
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains'
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY'
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
-          }
-        ]
-      }
-    ]
-  },
   images: {
     // domains: ["storage.googleapis.com"],
     dangerouslyAllowSVG: true,
@@ -63,7 +16,9 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.ctfassets.net",
       },
+
       //////////
+
       {
         protocol: "https",
         hostname: "placehold.co",
@@ -131,4 +86,5 @@ const nextConfig = {
     ], // Add placehold.co as an allowed domain
   },
 };
-export default withPWA(withNextIntl(nextConfig));
+
+export default withNextIntl(nextConfig);

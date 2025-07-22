@@ -21,6 +21,20 @@ export const FOOD = gql`fragment FoodItem on Food{
 }
 `
 
+export const GET_RESTAURANT_LIST = gql`
+  query RestaurantList {
+    restaurantList {
+      _id
+      name
+      slug
+      image
+      logo
+      isActive
+      shopType
+    }
+  }
+`;
+
 export const RESTAURANTS_FRAGMENT = gql`
   fragment RestaurantPreviewFields on RestaurantPreview {
     _id
@@ -98,9 +112,6 @@ export const NEAR_BY_RESTAURANTS_PREVIEW = gql`
         distanceWithCurrentLocation @client
         freeDelivery @client
         acceptVouchers @client
-        deliveryInfo {
-          deliveryFee
-        }
         location {
           coordinates
         }
@@ -164,6 +175,7 @@ export const GET_RESTAURANT_BY_ID_SLUG = gql`
           description
           isOutOfStock
           subCategory
+          isFavourite
           variations {
             _id
             title
@@ -179,7 +191,6 @@ export const GET_RESTAURANT_BY_ID_SLUG = gql`
         title
         description
         price
-        isOutOfStock
       }
       addons {
         _id

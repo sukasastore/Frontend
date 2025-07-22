@@ -49,30 +49,31 @@ const MoveableCard: React.FC<MoveableProps> = ({
 
       {middle == false ? (
         <div
-          className={`absolute inset-0 flex items-start justify-between  flex-col p-5  ${styles.textContainer}`}
+          className={`relative h-full inset-0 flex items-start justify-between  flex-col p-5  ${styles.textContainer}`}
         >
-          <div>
-            <h1 className="text-white text-2xl md:3xl lg:text-4xl font-extrabold mb-3">
+           <div className="absolute inset-0 bg-black opacity-30"></div>
+          <div className="relative z-10">
+            <h1 className=" text-white text-2xl md:text-3xl lg:text-4xl font-extrabold mb-3">
               {heading}
             </h1>
-            <p className="text-white text-md text-lg ">{subText}</p>
+            <p className="text-white text-lg md:text-2xl lg:text-3xl ">{subText}</p>
           </div>
-          <div>{button && button}</div>
+          <div className="relative z-50">{button && button}</div>
         </div>
       ) : (
         <div>
           <div
             className={`absolute inset-0 flex items-center justify-center  flex-col p-5  ${styles.textContainer}`}
           >
-            <div className="  ">
-              <h1 className="text-white text-2xl font-bold mb-3 text-center">
+            <div className="w-[80%] md:w-[40%]  ">
+              <h1 className="text-white text-2xl font-bold  text-center ">
                 {heading}
               </h1>
-              <p className="text-white md:text-5xl text-4xl font-extrabold text-center">
+              <p className="text-white text-lg md:text-2xl lg:text-3xl font-bold text-center">
                 {subText}
               </p>
             </div>
-            <div className="my-3">{button && button}</div>
+            <div className="my-4">{button && button}</div>
           </div>
         </div>
       )}
