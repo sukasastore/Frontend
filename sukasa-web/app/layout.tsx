@@ -4,7 +4,7 @@ import Script from "next/script";
 
 
 export const metadata = {
-  title: "Enatega Multivendor",
+  title: "Sukasa Single Vendor",
 };
 
 

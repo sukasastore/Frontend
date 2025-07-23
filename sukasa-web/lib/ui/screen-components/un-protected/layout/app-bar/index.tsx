@@ -299,7 +299,7 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
                   <div 
                   onClick={logoClickHandler}
                   className="text-xl font-bold text-gray-900">
-                   <Logo className="w-32 h-auto" fillColor="#000000" />
+                   <Logo className="w-32 h-auto" />
                   </div>
                 )}
                 {!isSearchFocused && 
@@ -355,7 +355,7 @@ const AppTopbar = ({ handleModalToggle }: IAppBarProps) => {
                     value={filter}
                     onChange={handleSearchInputChange}
                     onFocus={() => setIsSearchFocused(true)}
-                    placeholder="Search in enatega"
+                    placeholder="Search in sukasa"
                     className={`
       w-full px-4 py-2 pr-10 border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-sky-500
       ${!isSearchFocused ? "hidden" : "block"} sm:block
