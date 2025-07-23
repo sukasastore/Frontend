@@ -16,4 +16,3 @@ export * from './variation';
 export * from './coupon-restaurant';
 export * from './app-versions';
 export * from './bussiness-detail';
-export * from './shop-type'

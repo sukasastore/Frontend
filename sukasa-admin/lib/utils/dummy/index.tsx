@@ -15,7 +15,6 @@ import {
   IFoodNew,
   IOptions,
   IRestaurantResponse,
-  IShopType,
   IStaffResponse,
   IStatsCardProps,
   ITransactionHistory,
@@ -248,6 +247,28 @@ export const generateDummyOrderVendor = (
   return dummyOrderVendor;
 };
 
+// Function to generate dummy banner restaurant data for loading state
+export const generateDummyBannerRestaurants = (count: number = 10) => {
+  const banners = [];
+
+  for (let i = 0; i < count; i++) {
+    banners.push({
+      _id: `banner_${i + 1}`,
+      title: `Banner ${i + 1}`,
+      description: `Description for Banner ${i + 1}`,
+      file: `https://example.com/banner${i + 1}.jpg`,
+      foodId: `food_${i + 1}`,
+      restaurant: `restaurant_1`,
+      foodImage: `https://example.com/food${i + 1}.jpg`,
+      foodTitle: `Food ${i + 1}`,
+      displayImage: `https://example.com/banner${i + 1}.jpg`,
+      isActive: true,
+    });
+  }
+
+  return banners;
+};
+
 export const generateDummyCategories = (count: number = 10): ICategory[] => {
   const categories: ICategory[] = [];
 
@@ -255,6 +276,7 @@ export const generateDummyCategories = (count: number = 10): ICategory[] => {
     categories.push({
       _id: `category_${i + 1}`,
       title: `Category ${i + 1}`,
+      foods: [], // Adding the required foods array property
     });
   }
 
@@ -368,21 +390,6 @@ export const generateDummyCoupons = (count: number = 10) => {
   }
   return coupons;
 };
-
-export const generateDummyShopTypes = (count: number = 10) => {
-  const shop_types: IShopType[] = [];
-  for (let i = 0; i < count; i++) {
-    shop_types.push({
-      _id: `coupon_${i + 1}`,
-      title: `coupon_${i + 1}`,
-      isActive: Math.random() * 3 > 2,
-      image: '',
-      __typename: ''
-    });
-  }
-  return shop_types;
-};
-
 
 export const generateDummyCuisines = (count: number = 10) => {
   const cuisines: ICuisine[] = [];
@@ -533,13 +540,11 @@ export const generateDummyCouponsRestaurant = (
       discount: i + 1,
       enabled: Math.random() > 0.5,
       __typename: 'Rider',
-
     });
   }
 
   return coupons;
 };
-
 
 export const generateDummyStaff = (count: number = 10): IStaffResponse[] => {
   const staffs: IStaffResponse[] = [];

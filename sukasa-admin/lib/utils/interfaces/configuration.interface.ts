@@ -63,6 +63,13 @@ export interface IConfiguration {
   enableRestaurantDemo?: boolean;
   enableAdminDemo?: boolean;
   costType?: string;
+  isMultiVendor?: boolean | null;
+  restaurantCount?: number | null;
+}
+
+export interface IConfigurationContext {
+  configuration?: IConfiguration;
+  loading: Boolean;
 }
 
 export interface IConfigurationUnresolved {

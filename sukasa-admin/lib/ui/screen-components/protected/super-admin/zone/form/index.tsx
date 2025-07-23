@@ -121,9 +121,6 @@ export default function ZoneAddForm({
     }
   };
 
-
-
-
   return (
     <Sidebar
       visible={isAddZoneVisible}
@@ -155,8 +152,6 @@ export default function ZoneAddForm({
                   handleSubmit,
                   setFieldValue,
                 }) => {
-
-
                   return (
                     <Form onSubmit={handleSubmit}>
                       <div className="mb-4 space-y-4">
