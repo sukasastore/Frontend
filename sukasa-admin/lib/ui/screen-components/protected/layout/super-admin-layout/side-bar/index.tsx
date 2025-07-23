@@ -189,6 +189,7 @@ export default function MakeSidebar() {
       route: '/wallet',
       isParent: true,
       icon: faWallet,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       subMenu: useCheckAllowedRoutes([
         {
           text: t('Transaction History'),
