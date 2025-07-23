@@ -18,7 +18,6 @@ import { EDIT_RESTAURANT_COUPON } from '@/lib/api/graphql/mutations/coupons-rest
 import { GET_RESTAURANT_COUPONS } from '@/lib/api/graphql/queries/coupons-restaurant';
 import { useTranslations } from 'next-intl';
 
-
 export const COUPONS_RESTAURANT_TABLE_COLUMNS = ({
   menuItems,
 }: {
@@ -69,7 +68,6 @@ export const COUPONS_RESTAURANT_TABLE_COLUMNS = ({
     { headerName: t('Name'), propertyName: '__typename' },
     { headerName: t('Code'), propertyName: 'title' },
     { headerName: t('Discount'), propertyName: 'discount' },
-    // add column for endDate and lifeTimeActive
     {
       headerName: t('Enabled'),
       propertyName: 'enabled',

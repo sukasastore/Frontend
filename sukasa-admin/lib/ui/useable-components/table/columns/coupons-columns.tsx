@@ -75,7 +75,7 @@ export const COUPONS_TABLE_COLUMNS = ({
       _id: rowData?._id,
       title: rowData?.title,
       discount: rowData?.discount,
-      enabled: !rowData?.enabled
+      enabled: !rowData?.enabled,
     };
     await editCoupon({
       variables: {
@@ -102,7 +102,7 @@ export const COUPONS_TABLE_COLUMNS = ({
           return <span>{rowData.discount}%</span>;
         },
       },
-     {
+      {
         headerName: t('Status'),
         propertyName: 'enabled',
         body: (rowData: ICoupon) => {

@@ -3,7 +3,7 @@
 // Core
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ApolloError, useMutation } from '@apollo/client';
+import { ApolloCache, ApolloError, useMutation } from '@apollo/client';
 
 // PrimeReact
 import { FilterMatchMode } from 'primereact/api';
@@ -14,13 +14,13 @@ import { RestaurantsContext } from '@/lib/context/super-admin/restaurants.contex
 
 // Custom Hooks
 import { useQueryGQL } from '@/lib/hooks/useQueryQL';
-import useDebounce from '@/lib/hooks/useDebounce';
 
 // Custom Components
 import RestaurantDuplicateDialog from '../duplicate-dialog';
 import RestaurantsTableHeader from '../header/table-header';
 import Table from '@/lib/ui/useable-components/table';
 import CustomDialog from '@/lib/ui/useable-components/delete-dialog';
+import { useConfiguration } from '@/lib/hooks/useConfiguration';
 
 // Constants and Interfaces
 import {
@@ -32,8 +32,8 @@ import {
 
 // GraphQL Queries and Mutations
 import {
-  GET_RESTAURANTS_PAGINATED,
-  GET_CLONED_RESTAURANTS_PAGINATED,
+  GET_CLONED_RESTAURANTS,
+  GET_RESTAURANTS,
   HARD_DELETE_RESTAURANT,
 } from '@/lib/api/graphql';
 
@@ -50,25 +50,21 @@ export default function RestaurantsMain() {
   // Hooks
   const t = useTranslations();
 
+  const { IS_MULTIVENDOR } = useConfiguration();
+
   // Context
   const { showToast } = useContext(ToastContext);
   const { currentTab } = useContext(RestaurantsContext);
-  
   // Hooks
   const router = useRouter();
 
-  // State for pagination and search
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [deleteId, setDeleteId] = useState('');
   const [duplicateId, setDuplicateId] = useState('');
-  const [selectedProducts, setSelectedProducts] = useState<IRestaurantResponse[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<
+    IRestaurantResponse[]
+  >([]);
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [selectedActions, setSelectedActions] = useState<string[]>([]);
-  
-  // Debounce search to avoid too many API calls
-  const debouncedSearchTerm = useDebounce(globalFilterValue, 500);
-
   const filters = {
     global: { value: globalFilterValue, matchMode: FilterMatchMode.CONTAINS },
     action: {
@@ -77,32 +73,22 @@ export default function RestaurantsMain() {
     },
   };
 
-  // Reset page when search changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [debouncedSearchTerm, currentTab]);
-
-  // Query variables
-  const queryVariables = {
-    page: currentPage,
-    limit: rowsPerPage,
-    search: debouncedSearchTerm || undefined,
-  };
-
   //Query
-  const { data, loading, refetch } = useQueryGQL(
-    currentTab === 'Actual' ? GET_RESTAURANTS_PAGINATED : GET_CLONED_RESTAURANTS_PAGINATED,
-    queryVariables,
+  const { data, loading } = useQueryGQL(
+    currentTab === 'Actual' ? GET_RESTAURANTS : GET_CLONED_RESTAURANTS,
+    {},
     {
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'network-only',
       debounceMs: 300,
     }
   ) as IQueryResult<IRestaurantsResponseGraphQL | undefined, undefined>;
+  
 
-  useEffect(() => {
-    console.log("🚀 Store Screen Rendered");
-  });
-
+  useEffect(()=>{
+    console.log("🚀 Store Screen Rendered")
+  }, [])
+ 
+  
   // API
   const [hardDeleteRestaurant, { loading: isHardDeleting }] = useMutation(
     HARD_DELETE_RESTAURANT,
@@ -115,8 +101,6 @@ export default function RestaurantsMain() {
           duration: 2000,
         });
         setDeleteId('');
-        // Refetch data after deletion
-        refetch();
       },
       onError: ({ networkError, graphQLErrors }: ApolloError) => {
         showToast({
@@ -130,12 +114,48 @@ export default function RestaurantsMain() {
         });
         setDeleteId('');
       },
+      update: (cache: ApolloCache<unknown>): void => {
+        try {
+          const cachedRestaurants =
+            currentTab === 'Actual'
+              ? data?.restaurants
+              : data?.getClonedRestaurants;
+
+          if (currentTab === 'Actual') {
+            cache.writeQuery({
+              query: GET_RESTAURANTS,
+              data: {
+                restaurants: [
+                  ...(cachedRestaurants || []).filter(
+                    (restaurant: IRestaurantResponse) =>
+                      restaurant._id !== deleteId
+                  ),
+                ],
+              },
+            });
+          } else {
+            cache.writeQuery({
+              query: GET_CLONED_RESTAURANTS,
+              data: {
+                getClonedRestaurants: [
+                  ...(cachedRestaurants || []).filter(
+                    (restaurant: IRestaurantResponse) =>
+                      restaurant._id !== deleteId
+                  ),
+                ],
+              },
+            });
+          }
+        } finally {
+          setDeleteId('');
+        }
+      },
     }
   );
 
   const handleDelete = async (id: string) => {
     try {
-      await hardDeleteRestaurant({ variables: { id: id } });
+      hardDeleteRestaurant({ variables: { id: id } });
     } catch (err) {
       showToast({
         type: 'error',
@@ -146,31 +166,18 @@ export default function RestaurantsMain() {
     }
   };
 
-  // Pagination handlers
-  const handlePageChange = (page: number, rows: number) => {
-    setCurrentPage(page);
-    setRowsPerPage(rows);
-  };
-
   // Constants
-  const menuItems: IActionMenuItem<IRestaurantResponse>[] = [
+  // Create base menu items
+  const baseMenuItems: IActionMenuItem<IRestaurantResponse>[] = [
     {
       label: t('View'),
       command: (data?: IRestaurantResponse) => {
         if (data) {
           onUseLocalStorage('save', 'restaurantId', data?._id);
-          onUseLocalStorage('save', 'shopType', data?.shopType);
+          onUseLocalStorage('save', 'shopType', data?.shopType)
           const routeStack = ['Admin'];
           onUseLocalStorage('save', 'routeStack', JSON.stringify(routeStack));
           router.push(`/admin/store/`);
-        }
-      },
-    },
-    {
-      label: t('Duplicate'),
-      command: (data?: IRestaurantResponse) => {
-        if (data) {
-          setDuplicateId(data._id);
         }
       },
     },
@@ -183,14 +190,25 @@ export default function RestaurantsMain() {
       },
     },
   ];
+  
+  // Add duplicate option only if IS_MULTIVENDOR is true
+  const menuItems = IS_MULTIVENDOR 
+    ? [
+        baseMenuItems[0],
+        {
+          label: t('Duplicate'),
+          command: (data?: IRestaurantResponse) => {
+            if (data) {
+              setDuplicateId(data._id);
+            }
+          },
+        },
+        baseMenuItems[1]
+      ] 
+    : baseMenuItems;
 
-  // Get pagination data
-  const restaurantData = currentTab === 'Actual' 
-  ? data?.restaurantsPaginated 
-  : data?.getClonedRestaurantsPaginated;
-
-  const restaurants = restaurantData?.data || [];
-  const totalRecords = restaurantData?.totalCount || 0;
+  const _restaurants =
+    currentTab === 'Actual' ? data?.restaurants : data?.getClonedRestaurants;
 
   return (
     <div className="p-3">
@@ -203,17 +221,12 @@ export default function RestaurantsMain() {
             setSelectedActions={setSelectedActions}
           />
         }
-        data={loading ? generateDummyRestaurants() : restaurants}
+        data={loading ? generateDummyRestaurants() : (_restaurants ?? [])}
         filters={filters}
         setSelectedData={setSelectedProducts}
         selectedData={selectedProducts}
         columns={RESTAURANT_TABLE_COLUMNS({ menuItems })}
         loading={loading}
-        rowsPerPage={rowsPerPage}
-        // Server-side pagination props
-        totalRecords={totalRecords}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
         handleRowClick={(event: DataTableRowClickEvent) => {
           const target = event.originalEvent.target as HTMLElement | null;
 
@@ -222,7 +235,7 @@ export default function RestaurantsMain() {
           }
 
           onUseLocalStorage('save', 'restaurantId', event.data._id);
-          onUseLocalStorage('save', 'shopType', event.data.shopType);
+          onUseLocalStorage('save', 'shopType', event.data.shopType)
           const routeStack = ['Admin'];
           onUseLocalStorage('save', 'routeStack', JSON.stringify(routeStack));
           router.push(`/admin/store/`);
@@ -241,13 +254,15 @@ export default function RestaurantsMain() {
         message={t('Are you sure you want to delete this store?')}
       />
 
-      <RestaurantDuplicateDialog
-        restaurantId={duplicateId}
-        visible={!!duplicateId}
-        onHide={() => {
-          setDuplicateId('');
-        }}
-      />
+      {IS_MULTIVENDOR && (
+        <RestaurantDuplicateDialog
+          restaurantId={duplicateId}
+          visible={!!duplicateId}
+          onHide={() => {
+            setDuplicateId('');
+          }}
+        />
+      )}
     </div>
   );
 }

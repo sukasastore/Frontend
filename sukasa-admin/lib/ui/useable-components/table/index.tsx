@@ -27,10 +27,14 @@ const Table = <T extends ITableExtends>({
   moduleName = 'Restaurant-Orders',
   handleRowClick,
   rowsPerPage = 10,
+  onPage,
   className,
+  // For Store table
+  sortField,
+  sortOrder,
   scrollable = true,
   scrollHeight = '420px',
-  // Server-side pagination props
+  // New pagination props
   totalRecords,
   onPageChange,
   currentPage = 1,
@@ -47,7 +51,7 @@ const Table = <T extends ITableExtends>({
   // Handlers
   const handlePageChange = (event: DataTablePageEvent) => {
     if (onPageChange) {
-      // Calculate page number (PrimeReact uses 0-based indexing for first)
+      // Add 1 to first because PrimeReact uses 0-based indexing for pages
       const page = Math.floor(event.first / event.rows) + 1;
       onPageChange(page, event.rows);
     }
@@ -73,9 +77,9 @@ const Table = <T extends ITableExtends>({
   // Prepare pagination props based on server pagination status
   const paginationProps = isServerPaginated
     ? {
-        lazy: true,
         first: (currentPage - 1) * rowsPerPage,
-        totalRecords: totalRecords,
+        lazy: true,
+        totalRecords,
         onPage: handlePageChange,
       }
     : {};
@@ -86,7 +90,10 @@ const Table = <T extends ITableExtends>({
         header={header}
         paginator
         rows={rowsPerPage}
+        sortField={sortField}
+        sortOrder={sortOrder}
         rowsPerPageOptions={[10, 15, 25, 50]}
+        onPage={onPage}
         value={data}
         selectionAutoFocus={true}
         size={size}
@@ -107,7 +114,7 @@ const Table = <T extends ITableExtends>({
         rowClassName={rowClassName}
         onRowClick={handleRowClick}
         emptyMessage={t('No Data Available')}
-        {...paginationProps}
+        {...paginationProps} // Spread pagination props conditionally
       >
         {isSelectable && (
           <Column
